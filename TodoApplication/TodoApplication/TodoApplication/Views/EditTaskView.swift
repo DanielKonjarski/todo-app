@@ -1,59 +1,55 @@
 //
-//  ContentView.swift
-//  TodoApplication
+//  TodoApp
 //
-//  Created by Daniel Konjarski & Carl Trinidad
+//  Daniel Konjarski & Carl Trinidad - Group 59
+//  101436648 & 101425882
 //
 
+import SwiftUI
 
 struct EditTaskView: View {
-    @State var task: Task
-
+    @EnvironmentObject var taskViewModel: TaskViewModel
+    @Environment(\.presentationMode) var presentationMode
+    
+    @State private var editedTask: Task
+    
+    init(task: Task) {
+        _editedTask = State(initialValue: task)
+    }
+    
     var body: some View {
-        VStack {
-            Text("Edit Task")
-                .font(.largeTitle)
-                .foregroundColor(.white)
-                .padding()
-
-            TextField("Task", text: $task.title)
-                .padding()
-                .background(Color.gray.opacity(0.3))
-                .cornerRadius(12)
-                .foregroundColor(.white)
-
-            TextField("Description", text: $task.description)
-                .padding()
-                .background(Color.gray.opacity(0.3))
-                .cornerRadius(12)
-                .foregroundColor(.white)
-
-            TextField("Collection", text: $task.collection)
-                .padding()
-                .background(Color.gray.opacity(0.3))
-                .cornerRadius(12)
-                .foregroundColor(.white)
-
-            DatePicker("Select Date", selection: $task.date, displayedComponents: .date)
-                .padding()
-                .background(Color.gray.opacity(0.3))
-                .cornerRadius(12)
-                .foregroundColor(.white)
-
-            Button(action: {
-                // Update Task Action
-            }) {
-                Text("Update Task")
-                    .font(.title2)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.gray)
+        Form {
+            Section(header: Text("Task Details").foregroundColor(.white)) {
+                TextField("Task Title", text: $editedTask.title)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
                     .foregroundColor(.white)
-                    .cornerRadius(12)
-                    .padding()
+                TextField("Task Description", text: $editedTask.description)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .foregroundColor(.white)
+                DatePicker("Due Date", selection: $editedTask.dueDate, displayedComponents: .date)
+                    .foregroundColor(.white)
+                Toggle("Completed", isOn: $editedTask.isCompleted)
+                    .foregroundColor(.white)
+            }
+            
+            Section {
+                Button(action: updateTask) {
+                    Text("Update Task")
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.white)
+                        .foregroundColor(.black)
+                        .cornerRadius(10)
+                }
             }
         }
-        .padding()
-        .background(Color.black.edgesIgnoringSafeArea(.all))
+        .navigationTitle("Edit Task")
+        .background(Color.black)
+        .foregroundColor(.white)
+    }
+    
+    private func updateTask() {
+        taskViewModel.updateTask(task: editedTask)
+        presentationMode.wrappedValue.dismiss()
     }
 }

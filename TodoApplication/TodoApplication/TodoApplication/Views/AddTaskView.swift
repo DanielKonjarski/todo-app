@@ -1,62 +1,64 @@
 //
-//  ContentView.swift
-//  TodoApplication
+//  TodoApp
 //
-//  Created by Daniel Konjarski & Carl Trinidad
+//  Daniel Konjarski & Carl Trinidad - Group 59
+//  101436648 & 101425882
 //
 
+import SwiftUI
 
 struct AddTaskView: View {
-    private var title = ""
-    private var description = ""
-    private var collection = ""
-    private var date = ""
-
+    @EnvironmentObject var taskViewModel: TaskViewModel
+    @Environment(\.presentationMode) var presentationMode
+    
+    @State private var title = ""
+    @State private var description = ""
+    @State private var dueDate = Date()
+    
     var body: some View {
-        VStack {
-            Text("Add Task")
-                .font(.largeTitle)
-                .foregroundColor(.white)
-                .padding()
-
-            TextField("Task", text: $title)
-                .padding()
-                .background(Color.gray.opacity(0.3))
-                .cornerRadius(12)
-                .foregroundColor(.white)
-
-            TextField("Description", text: $description)
-                .padding()
-                .background(Color.gray.opacity(0.3))
-                .cornerRadius(12)
-                .foregroundColor(.white)
-
-            TextField("Collection", text: $collection)
-                .padding()
-                .background(Color.gray.opacity(0.3))
-                .cornerRadius(12)
-                .foregroundColor(.white)
-
-            DatePicker("Select Date", selection: $date, displayedComponents: .date)
-                .padding()
-                .background(Color.gray.opacity(0.3))
-                .cornerRadius(12)
-                .foregroundColor(.white)
-
-            Button(action: {
-                // Save Task Action
-            }) {
-                Text("Save Task")
-                    .font(.title2)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.gray)
+        NavigationView {
+            Form {
+                Section(header: Text("Task Details").foregroundColor(.white)) {
+                    TextField("Task Title", text: $title)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .foregroundColor(.white)
+                    TextField("Task Description", text: $description)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .foregroundColor(.white)
+                    DatePicker("Due Date", selection: $dueDate, displayedComponents: .date)
+                        .foregroundColor(.white)
+                }
+                
+                Section {
+                    Button(action: addTask) {
+                        Text("Add Task")
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.white)
+                            .foregroundColor(.black)
+                            .cornerRadius(10)
+                    }
+                }
+            }
+            .navigationTitle("Create New Task")
+            .background(Color.black)
+            .foregroundColor(.white)
+            .toolbar {
+                #if os(iOS)
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Cancel") {
+                        presentationMode.wrappedValue.dismiss()
+                    }
                     .foregroundColor(.white)
-                    .cornerRadius(12)
-                    .padding()
+                }
+                #endif
             }
         }
-        .padding()
-        .background(Color.black.edgesIgnoringSafeArea(.all))
+        .background(Color.black)
+    }
+    
+    private func addTask() {
+        taskViewModel.addTask(title: title, description: description, dueDate: dueDate)
+        presentationMode.wrappedValue.dismiss()
     }
 }

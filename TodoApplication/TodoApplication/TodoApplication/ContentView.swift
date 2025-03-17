@@ -1,18 +1,25 @@
 //
 //  ContentView.swift
-//  TodoApplication
+//  TodoApp
 //
-//  Created by Daniel Konjarski & Carl Trinidad
+//  Created by Daniel Konjarski on 2025-03-16.
 //
+
 import SwiftUI
 
-@main
-struct ContentView: App {
-    var body: some Scene {
-        WindowGroup {
-            NavigationView {
+struct ContentView: View{
+    @StateObject private var userViewModel = UserViewModel()
+    @StateObject private var taskViewModel = TaskViewModel()
+    
+    var body: some View{
+        NavigationView{
+            if userViewModel.isAuthenticated{
+                DashboardView()
+            }else {
                 WelcomeView()
             }
         }
+        .environmentObject(userViewModel)
+        .environmentObject(taskViewModel)
     }
 }
